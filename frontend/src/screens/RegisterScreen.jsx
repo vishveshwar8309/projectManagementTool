@@ -1,22 +1,50 @@
 import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import FormContainer from "../components/FormContainer";
-import { Link } from "react-router-dom";
+import { useRegisterUserMutation } from "../slices/userApiSlice";
+import { saveCredentials } from "../slices/authSlice";
+import { toast } from "react-toastify";
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("");
 
-  const submitHandler = (e) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [registerUser, { isLoading, error }] = useRegisterUserMutation();
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    console.log("submitted");
+
+    if (password === confirmPassword) {
+      try {
+        const user = await registerUser({
+          email,
+          name,
+          password,
+          role,
+        }).unwrap();
+        dispatch(saveCredentials({ ...user }));
+        navigate("/progectmanagementtool");
+        toast.success("loggedIn successfully");
+      } catch (err) {
+        toast.error(err?.data?.message || err.error);
+      }
+    } else {
+      toast.error("password miss match");
+    }
   };
 
   return (
     <FormContainer>
       <h1 className="mt-5">Register User</h1>
-      <Form className="mt-5" onSubmit={submitHandler}>
+      <Form className="mt-4" onSubmit={submitHandler}>
         <Form.Group controlId="email" className="my-3">
           <Form.Label>Email:</Form.Label>
           <Form.Control
@@ -39,6 +67,15 @@ const RegisterScreen = () => {
           ></Form.Control>
         </Form.Group>
 
+        <Form.Group controlId="role" className="my-3">
+          <Form.Label>Role:</Form.Label>
+          <Form.Select onChange={(e) => setRole(e.target.value)} required>
+            <option value="">Choose Your Role</option>
+            <option value="Employee">Employee</option>
+            <option value="Manager">Manager</option>
+          </Form.Select>
+        </Form.Group>
+
         <Form.Group controlId="password" className="my-3">
           <Form.Label>Password:</Form.Label>
           <Form.Control
@@ -46,6 +83,17 @@ const RegisterScreen = () => {
             placeholder="Enter Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
+          ></Form.Control>
+        </Form.Group>
+
+        <Form.Group controlId="confirmPassword" className="my-3">
+          <Form.Label>Confirm Password:</Form.Label>
+          <Form.Control
+            type="password"
+            placeholder="Re-enter Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             required
           ></Form.Control>
         </Form.Group>
