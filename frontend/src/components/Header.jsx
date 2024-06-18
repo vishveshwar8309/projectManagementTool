@@ -1,22 +1,75 @@
 import React from "react";
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Container, Nav, NavDropdown, Navbar } from "react-bootstrap";
 import { FaUser } from "react-icons/fa";
 import { LinkContainer } from "react-router-bootstrap";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { logoutUser } from "../slices/authSlice";
+import { useLogoutUserMutation } from "../slices/userApiSlice";
 
 const Header = () => {
+  const { userInfo } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [logout] = useLogoutUserMutation();
+
+  const handleLogOut = async () => {
+    await logout();
+    dispatch(logoutUser());
+    navigate("/signin");
+    toast.success("logout successfull");
+  };
+
   return (
-    <Navbar expand="lg" className="bg-body-tertiary navbarBackground">
+    <Navbar expand="lg" bg="light" variant="light">
       <Container>
-        <Navbar.Brand>Project Manager</Navbar.Brand>
+        <Navbar.Brand className="me-5">Project Manager</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            {userInfo && (
+              <NavDropdown
+                title="My Projects"
+                // style={{
+                //   border: "1px solid #000",
+                //   borderRadius: "5px",
+                //   maxWidth: "120px",
+                // }}
+              >
+                <NavDropdown.Item>example project</NavDropdown.Item>
+              </NavDropdown>
+            )}
+          </Nav>
           <Nav className="ms-auto">
-            <LinkContainer to="/signin">
-              <Nav.Link>
-                <FaUser />
-                SignIn
-              </Nav.Link>
-            </LinkContainer>
+            {userInfo && userInfo.role === "Manager" && (
+              <>
+                <LinkContainer
+                  to={`/projectmanagementtool/manager/${userInfo._id}/createproject`}
+                  className="me-5"
+                >
+                  <Nav.Link>Create new project</Nav.Link>
+                </LinkContainer>
+              </>
+            )}
+            {userInfo ? (
+              <>
+                <NavDropdown title={userInfo.name} id="basic-nav-dropdown">
+                  <NavDropdown.Item onClick={handleLogOut}>
+                    logout
+                  </NavDropdown.Item>
+                </NavDropdown>
+              </>
+            ) : (
+              <LinkContainer to="/signin">
+                <Nav.Link>
+                  <FaUser />
+                  SignIn
+                </Nav.Link>
+              </LinkContainer>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

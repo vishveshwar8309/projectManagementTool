@@ -1,9 +1,12 @@
 import React from "react";
 import { Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const UnloggedScreen = () => {
   const navigate = useNavigate();
+
+  const { userInfo } = useSelector((state) => state.auth);
 
   const handleClick = () => {
     navigate("/signin");
@@ -11,9 +14,13 @@ const UnloggedScreen = () => {
 
   return (
     <div>
-      <Button variant="success" onClick={handleClick}>
-        signIn to continue
-      </Button>
+      {userInfo ? (
+        <Navigate to="/projectmanagementtool" />
+      ) : (
+        <Button variant="success" onClick={handleClick}>
+          signIn to continue
+        </Button>
+      )}
     </div>
   );
 };

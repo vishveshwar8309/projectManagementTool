@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import FormContainer from "../components/FormContainer";
 import { useRegisterUserMutation } from "../slices/userApiSlice";
 import { saveCredentials } from "../slices/authSlice";
@@ -14,8 +14,16 @@ const RegisterScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("");
 
+  const { userInfo } = useSelector((state) => state.auth);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/projectmanagementtool");
+    }
+  }, [userInfo]);
 
   const [registerUser, { isLoading, error }] = useRegisterUserMutation();
 

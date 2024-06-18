@@ -8,15 +8,17 @@ import {
 } from 'react-router-dom'
 import { Provider } from 'react-redux';
 import "bootstrap/dist/css/bootstrap.min.css"
-// import 'react-toastify/dist/ReactToastify.css'
 import './index.css';
 import App from './App';
 import store from './store';
 import UnloggedScreen from './screens/UnloggedScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
-import Private from './screens/Private';
+import Private from './components/Private';
 import HomeScreen from './screens/HomeScreen';
+import CreateTaskScreen from './screens/CreateTaskScreen';
+import Manager from './components/Manager';
+import ProjectTraceScreen from './screens/ProjectTraceScreen';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -28,13 +30,17 @@ const router = createBrowserRouter(
       <Route path='/register' element={<RegisterScreen />} />
 
       <Route path='' element={<Private />}>
-        <Route path='/progectmanagementtool' element={<HomeScreen />} />
+        <Route path='/projectmanagementtool' element={<HomeScreen />} />
+        <Route path='/projectmanagementtool/project/:id' element={<ProjectTraceScreen />} />
+      </Route>
+
+      <Route path='' element={<Manager />}>
+        <Route path='/projectmanagementtool/manager/:id/createproject' element={<CreateTaskScreen />} />
       </Route>
     </Route>
 
   )
 )
-
 
 root.render(
   <React.StrictMode>
@@ -43,5 +49,3 @@ root.render(
     </Provider>
   </React.StrictMode>
 );
-
-
