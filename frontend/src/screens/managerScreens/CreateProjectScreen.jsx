@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import FormContainer from "../components/FormContainer";
-import { useCreateProjectMutation } from "../slices/projectApiSlice";
+import FormContainer from "../../components/FormContainer";
+import { useCreateProjectMutation } from "../../slices/projectApiSlice";
 
-const CreateTaskScreen = () => {
+const CreateProjectScreen = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -119,4 +119,4 @@ const CreateTaskScreen = () => {
   );
 };
 
-export default CreateTaskScreen;
+export default CreateProjectScreen;

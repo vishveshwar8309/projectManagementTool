@@ -16,7 +16,7 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import Private from './components/Private';
 import HomeScreen from './screens/HomeScreen';
-import CreateTaskScreen from './screens/CreateTaskScreen';
+import CreateProjectScreen from './screens/managerScreens/CreateProjectScreen';
 import Manager from './components/Manager';
 import ProjectTraceScreen from './screens/ProjectTraceScreen';
 
@@ -35,7 +35,7 @@ const router = createBrowserRouter(
       </Route>
 
       <Route path='' element={<Manager />}>
-        <Route path='/projectmanagementtool/manager/:id/createproject' element={<CreateTaskScreen />} />
+        <Route path='/projectmanagementtool/manager/:id/createproject' element={<CreateProjectScreen />} />
       </Route>
     </Route>
 
