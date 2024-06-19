@@ -69,15 +69,23 @@ const ProjectTraceScreen = () => {
             <Loader />
           ) : (
             <>
-              <h2>{openedProject[0].title}</h2>
-              <h5 className="mt-4">Description:</h5>
-              <div className="p-3 my-3 rounded shadow">
-                {openedProject[0].description}
-              </div>
-              <h5 className="mt-4">Start Date:</h5>
-              <div>{openedProject[0].startDate.substring(0, 10)}</div>
-              <h5 className="mt-4">Deadline:</h5>
-              <div>{openedProject[0].endDate.substring(0, 10)}</div>
+              {openedProject && (
+                <>
+                  <h2>{openedProject[0].title}</h2>
+                  <h5 className="mt-4">Description:</h5>
+                  <div
+                    className="p-3 my-3 rounded shadow"
+                    style={{ heigth: "auto" }}
+                  >
+                    {openedProject[0].description}
+                  </div>
+                  <h5 className="mt-4">Start Date:</h5>
+                  <div>{openedProject[0].startDate.substring(0, 10)}</div>
+                  <h5 className="mt-4">Deadline:</h5>
+                  <div>{openedProject[0].endDate.substring(0, 10)}</div>
+                </>
+              )}
+
               {role !== "manager" && (
                 <>
                   <h5 className="mt-4">Manager</h5>

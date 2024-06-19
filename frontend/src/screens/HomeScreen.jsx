@@ -65,7 +65,7 @@ const HomeScreen = () => {
 
         setEvents(updatedEvents);
       } else {
-        toast.info(projectDetailsRef.error.data);
+        toast.info("no projects Found");
       }
     }
     fetchData();
