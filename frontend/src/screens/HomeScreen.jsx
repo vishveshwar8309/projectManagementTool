@@ -1,34 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Container, Row, Col, Stack, Table } from "react-bootstrap";
+import { Container, Row, Col, Table } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-// import FullCalendar from "@fullcalendar/react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { Calendar } from "@fullcalendar/core";
-// import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+
 import { useGetProjectDetailsMutation } from "../slices/projectApiSlice";
-import { toast } from "react-toastify";
-import Message from "../components/Message";
 import { saveProjects } from "../slices/projectSlice";
-import { Link } from "react-router-dom";
+import Message from "../components/Message";
+import Loader from "../components/Loader";
 
 const HomeScreen = () => {
   const [projects, setProjects] = useState([]);
   const [events, setEvents] = useState([]);
-  var existingProjects;
 
   const { userInfo } = useSelector((state) => state.auth);
   const { projectsInfo } = useSelector((state) => state.projects);
-  console.log(projectsInfo);
 
+  var existingProjects;
   if (!projectsInfo) {
     existingProjects = [];
   } else {
     existingProjects = projectsInfo;
   }
 
-  console.log(existingProjects);
-
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [getProjectDetails, { isLoading, error }] =
     useGetProjectDetailsMutation();
@@ -57,11 +57,11 @@ const HomeScreen = () => {
         dispatch(saveProjects([...updatedProjects]));
 
         const updatedEvents = fetchedProjects.map((project) => ({
+          projectId: project._id,
           title: project.title,
           start: project.startDate,
           end: project.endDate,
         }));
-        console.log(updatedEvents);
 
         setEvents(updatedEvents);
       } else {
@@ -72,38 +72,39 @@ const HomeScreen = () => {
   }, []);
 
   //createing the custom calender using fullCalender Api
-  if (calendarRef.current) {
-    const calendar = new Calendar(calendarRef.current, {
-      plugins: [dayGridPlugin],
-      initialView: "FourDays",
+  useEffect(() => {
+    if (calendarRef.current) {
+      const eventClickHandler = (clickInfo) => {
+        navigate(
+          `${userInfo.role === "Manager" ? "manager" : "employee"}/${
+            userInfo._id
+          }/project/${clickInfo.event._def.extendedProps.projectId}`
+        );
+      };
 
-      views: {
-        FourDays: {
-          type: "dayGrid",
-          duration: { days: 4 },
+      const calendar = new Calendar(calendarRef.current, {
+        plugins: [dayGridPlugin, interactionPlugin],
+        initialView: "FourDays",
+
+        views: {
+          FourDays: {
+            type: "dayGrid",
+            duration: { days: 4 },
+          },
         },
-      },
+        eventColor: "#378006",
+        events: { events },
+        contentHeight: 600,
+        eventClick: eventClickHandler,
+        headerToolbar: {
+          left: "prev,next",
+          right: "FourDays,dayGridDay",
+        },
+      });
 
-      headerToolbar: {
-        left: "prev,next",
-        right: "FourDays,dayGridDay",
-      },
-
-      // plugins: [dayGridPlugin],
-      // initialView: "dayGridWeek",
-      // headerToolbar: {
-      //   left: "prev,next",
-      //   center: "title",
-      //   right: "dayGridWeek,dayGridDay", // user can switch between the two
-      // },
-
-      eventColor: "#378006",
-      events: { events },
-      contentHeight: 600,
-    });
-
-    calendar.render();
-  }
+      calendar.render();
+    }
+  }, [events]);
 
   return (
     <Container>
@@ -111,7 +112,7 @@ const HomeScreen = () => {
         <Col className="mt-5">
           <h1>My Projects</h1>
           {isLoading ? (
-            <p>Loading...</p>
+            <Loader />
           ) : error ? (
             <div>
               {userInfo && userInfo.role === "Manager" ? (
@@ -132,30 +133,37 @@ const HomeScreen = () => {
                 <thead>
                   <tr className="shadow" style={{ height: "50px" }}>
                     <th>Title </th>
+                    <th>No. of team members</th>
                     <th>Start Date</th>
                     <th>End Date</th>
                   </tr>
                 </thead>
                 <br />
                 <tbody>
-                  {projects.map((project) => (
-                    <>
-                      <tr className="shadow" style={{ height: "40px" }}>
-                        <td>
-                          <Link
-                            to={`/projectmanagementtool/project/${project._id}`}
-                            key={project._id}
-                            style={{ textDecoration: "none", color: "black" }}
-                          >
-                            {project.title}
-                          </Link>
-                        </td>
-                        <td>{project.endDate.substring(0, 10)}</td>
-                        <td>{project.startDate.substring(0, 10)}</td>
-                      </tr>
-                      <br />
-                    </>
-                  ))}
+                  {userInfo &&
+                    projects.map((project) => (
+                      <>
+                        <tr className="shadow" style={{ height: "40px" }}>
+                          <td>
+                            <Link
+                              to={`/projectmanagementtool/${
+                                userInfo.role === "Manager"
+                                  ? "manager"
+                                  : "employee"
+                              }/${userInfo._id}/project/${project._id}`}
+                              key={project._id}
+                              style={{ textDecoration: "none", color: "black" }}
+                            >
+                              {project.title}
+                            </Link>
+                          </td>
+                          <td>{project.teamMembers.length}</td>
+                          <td>{project.endDate.substring(0, 10)}</td>
+                          <td>{project.startDate.substring(0, 10)}</td>
+                        </tr>
+                        <br />
+                      </>
+                    ))}
                 </tbody>
               </Table>
             )

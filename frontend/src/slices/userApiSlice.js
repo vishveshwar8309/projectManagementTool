@@ -27,7 +27,15 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
             })
         }),
+        getEmployersData: builder.mutation({
+            query: (data) => ({
+                url: `${USER_URL}/employee`,
+                body: data,
+                method: 'POST'
+            }),
+            keepUnusedDataFor: 600,
+        })
     })
 })
 
-export const { useRegisterUserMutation, useLogoutUserMutation, useLoginUserMutation } = userApiSlice;
+export const { useRegisterUserMutation, useLogoutUserMutation, useLoginUserMutation, useGetEmployersDataMutation } = userApiSlice;

@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import userRoutes from './routes/userRoutes.js';
 import projectRoutes from './routes/projectRoutes.js'
+import taskRouter from './routes/taskRoutes.js'
 
 const port = process.env.PORT || 5000;
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 app.use("/user", userRoutes)
 app.use("/project", projectRoutes)
+app.use('/task', taskRouter)
 
 app.get('*', (req, res) => {
     res.json({ message: "api successful" });

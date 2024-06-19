@@ -1,3 +1,19 @@
+.fc-event {
+  cursor: pointer;
+  height: 25px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.employee-name {
+  cursor: pointer;
+  height: 30px
+}
+
+.employee-name:hover {
+  background-color: #e8e8e8;
+}
+
 .App {
   text-align: center;
 }

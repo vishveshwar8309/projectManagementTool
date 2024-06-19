@@ -52,4 +52,21 @@ const logoutUser = async (req, res) => {
     res.status(200).json({ message: "logout successful" });
 }
 
-export { registeruser, authenticateUser, logoutUser }
+const getEmployersData = async (req, res) => {
+    const ids = req.body;
+    try {
+
+        const employeesData = await User.find({ _id: { $in: ids } })
+
+        if (ids.length === employeesData.length) {
+
+            res.status(200).json(employeesData)
+        } else {
+            res.status(404).json("Some Team members not Found")
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Can't able to fetch data at this time" })
+    }
+}
+
+export { registeruser, authenticateUser, logoutUser, getEmployersData }

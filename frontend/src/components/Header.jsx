@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { logoutUser } from "../slices/authSlice";
 import { useLogoutUserMutation } from "../slices/userApiSlice";
+import { removeProjects } from "../slices/projectSlice";
 
 const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -19,6 +20,7 @@ const Header = () => {
   const handleLogOut = async () => {
     await logout();
     dispatch(logoutUser());
+    dispatch(removeProjects());
     navigate("/signin");
     toast.success("logout successfull");
   };
@@ -29,20 +31,6 @@ const Header = () => {
         <Navbar.Brand className="me-5">Project Manager</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            {userInfo && (
-              <NavDropdown
-                title="My Projects"
-                // style={{
-                //   border: "1px solid #000",
-                //   borderRadius: "5px",
-                //   maxWidth: "120px",
-                // }}
-              >
-                <NavDropdown.Item>example project</NavDropdown.Item>
-              </NavDropdown>
-            )}
-          </Nav>
           <Nav className="ms-auto">
             {userInfo && userInfo.role === "Manager" && (
               <>

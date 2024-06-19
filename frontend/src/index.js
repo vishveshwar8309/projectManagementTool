@@ -19,6 +19,8 @@ import HomeScreen from './screens/HomeScreen';
 import CreateProjectScreen from './screens/managerScreens/CreateProjectScreen';
 import Manager from './components/Manager';
 import ProjectTraceScreen from './screens/ProjectTraceScreen';
+import CreateTaskScreen from './screens/CreateTaskScreen';
+import EditTaskScreen from './screens/EditTaskScreen';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -31,7 +33,9 @@ const router = createBrowserRouter(
 
       <Route path='' element={<Private />}>
         <Route path='/projectmanagementtool' element={<HomeScreen />} />
-        <Route path='/projectmanagementtool/project/:id' element={<ProjectTraceScreen />} />
+        <Route path='/projectmanagementtool/:role/:employeeId/project/:projectId' element={<ProjectTraceScreen />} />
+        <Route path='/projectmanagementtool/:role/:employeeId/project/:projectId/createtask' element={<CreateTaskScreen />} />
+        <Route path='/projectmanagementtool/:role/:employeeId/project/:projectId/edittask/:taskId' element={<EditTaskScreen />} />
       </Route>
 
       <Route path='' element={<Manager />}>
