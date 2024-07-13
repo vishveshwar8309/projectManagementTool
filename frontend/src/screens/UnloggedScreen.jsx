@@ -13,7 +13,7 @@ const UnloggedScreen = () => {
   };
 
   return (
-    <div>
+    <div style={{ textAlign: "center", marginTop: "15%" }}>
       {userInfo ? (
         <Navigate to="/projectmanagementtool" />
       ) : (
