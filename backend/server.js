@@ -1,3 +1,4 @@
+import path from 'path'
 import express from 'express'
 const app = express();
 import mongoDB from './config/db.js'
