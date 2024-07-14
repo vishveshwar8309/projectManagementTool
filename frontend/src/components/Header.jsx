@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { logoutUser } from "../slices/authSlice";
 import { useLogoutUserMutation } from "../slices/userApiSlice";
-import { removeProjects } from "../slices/projectSlice";
 
 const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -20,7 +19,6 @@ const Header = () => {
   const handleLogOut = async () => {
     await logout();
     dispatch(logoutUser());
-    dispatch(removeProjects());
     navigate("/signin");
     toast.success("logout successfull");
   };

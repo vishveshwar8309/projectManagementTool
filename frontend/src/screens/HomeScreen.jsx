@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Table } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -9,7 +9,6 @@ import { Calendar } from "@fullcalendar/core";
 import interactionPlugin from "@fullcalendar/interaction";
 
 import { useGetProjectDetailsMutation } from "../slices/projectApiSlice";
-import { saveProjects } from "../slices/projectSlice";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 
@@ -18,16 +17,7 @@ const HomeScreen = () => {
   const [events, setEvents] = useState([]);
 
   const { userInfo } = useSelector((state) => state.auth);
-  const { projectsInfo } = useSelector((state) => state.projects);
 
-  var existingProjects;
-  if (!projectsInfo) {
-    existingProjects = [];
-  } else {
-    existingProjects = projectsInfo;
-  }
-
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [getProjectDetails, { isLoading, error }] =
@@ -35,28 +25,15 @@ const HomeScreen = () => {
 
   const calendarRef = useRef(null);
 
-  //Loading projects data
+  //  Loading projects data
   useEffect(() => {
-    async function fetchData() {
-      const projectDetailsRef = await getProjectDetails(userInfo.projects);
+    async function fetchProjects() {
+      const projectDetails = await getProjectDetails(userInfo?.projects);
 
-      if (!projectDetailsRef?.error?.data) {
-        const fetchedProjects = projectDetailsRef.data;
+      setProjects(projectDetails?.data);
 
-        const updatedProjects = [
-          ...existingProjects,
-          ...fetchedProjects.filter(
-            (newProject) =>
-              !existingProjects.some(
-                (existingProject) => existingProject.id === newProject.id
-              )
-          ),
-        ];
-
-        setProjects(updatedProjects);
-        dispatch(saveProjects([...updatedProjects]));
-
-        const updatedEvents = fetchedProjects.map((project) => ({
+      if (projectDetails.data) {
+        const updatedEvents = projectDetails.data.map((project) => ({
           projectId: project._id,
           title: project.title,
           start: project.startDate,
@@ -65,11 +42,11 @@ const HomeScreen = () => {
 
         setEvents(updatedEvents);
       } else {
-        toast.info("no projects Found");
+        toast.info("Projects not found");
       }
     }
-    fetchData();
-  }, []);
+    fetchProjects();
+  }, [getProjectDetails, userInfo]);
 
   //createing the custom calender using fullCalender Api
   useEffect(() => {
@@ -104,7 +81,7 @@ const HomeScreen = () => {
 
       calendar.render();
     }
-  }, [events]);
+  }, [events, navigate, userInfo]);
 
   return (
     <Container>
@@ -141,9 +118,10 @@ const HomeScreen = () => {
                 <br />
                 <tbody>
                   {userInfo &&
+                    projects &&
                     projects.map((project) => (
                       <>
-                        <tr className="shadow" style={{ height: "40px" }}>
+                        <tr className="tr shadow" style={{ height: "40px" }}>
                           <td>
                             <Link
                               to={`/projectmanagementtool/${
