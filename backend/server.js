@@ -22,9 +22,23 @@ app.use("/user", userRoutes)
 app.use("/project", projectRoutes)
 app.use('/task', taskRouter)
 
-app.get('*', (req, res) => {
-    res.json({ message: "api successful" });
-})
+const __dirname = path.resolve()
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')))     //serving   uploads/  folder as the static folder
+
+if (process.env.NODE_ENV === 'production') {
+    //set static folder
+
+    app.use(express.static(path.join(__dirname, '/frontend/build')))
+
+    // any route that is not api will be redirected to indesx.html
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '/frontend/build', 'index.html'))
+    })
+} else {
+    app.get("/", (req, res) => {
+        res.send("api successful...");
+    });
+}
 
 app.use(notFound);
 app.use(errorHandler);
