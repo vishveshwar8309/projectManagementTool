@@ -121,7 +121,11 @@ const HomeScreen = () => {
                     projects &&
                     projects.map((project) => (
                       <>
-                        <tr className="tr shadow" style={{ height: "40px" }}>
+                        <tr
+                          className="tr shadow"
+                          style={{ height: "40px" }}
+                          key={project.id}
+                        >
                           <td>
                             <Link
                               to={`/projectmanagementtool/${

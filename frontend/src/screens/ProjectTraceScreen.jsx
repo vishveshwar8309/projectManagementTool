@@ -6,22 +6,20 @@ import { useGetEmployersDataMutation } from "../slices/userApiSlice";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { useGetTasksQuery } from "../slices/taskApiSlice";
+import { useGetProjectMutation } from "../slices/projectApiSlice";
 import { FaEdit } from "react-icons/fa";
 
 const ProjectTraceScreen = () => {
   const { employeeId, projectId, role } = useParams();
   const [employersData, setEmployersData] = useState([]);
+  const [project, setProject] = useState({});
   const [tasks, setTasks] = useState(null);
 
   const { userInfo } = useSelector((state) => state.auth);
 
-  const { projectsInfo } = useSelector((state) => state.projects);
-  var openedProject;
-  if (projectsInfo) {
-    openedProject = projectsInfo.filter((project) => project._id === projectId);
-  }
+  const [getProject, { isLoading: isGetting, error: isError }] =
+    useGetProjectMutation();
 
-  const [getEmployersData, { isLoading }] = useGetEmployersDataMutation();
   const {
     data: fetchedTasks,
     isLoading: isQuerying,
@@ -31,21 +29,30 @@ const ProjectTraceScreen = () => {
     projectId,
   });
 
+  const [getEmployersData, { isLoading }] = useGetEmployersDataMutation();
+
+  useEffect(() => {
+    async function fetchData() {
+      const projectDetails = await getProject(projectId);
+      // console.log(projectDetails);
+      setProject(projectDetails);
+    }
+    fetchData();
+  }, []);
+
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("first");
     setTasks(fetchedTasks);
   }, [fetchedTasks]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getEmployersData([
-        ...openedProject[0].teamMembers,
-      ]).unwrap();
-
+      console.log("sss");
+      const data = await getEmployersData([...project.teamMembers]).unwrap();
       setEmployersData(data);
     };
-
     fetchData();
   }, []);
 
@@ -69,20 +76,20 @@ const ProjectTraceScreen = () => {
             <Loader />
           ) : (
             <>
-              {openedProject && (
+              {project && (
                 <>
-                  <h2>{openedProject[0].title}</h2>
+                  <h2>{project.title}</h2>
                   <h5 className="mt-4">Description:</h5>
                   <div
                     className="p-3 my-3 rounded shadow"
-                    style={{ heigth: "auto" }}
+                    style={{ height: "auto" }}
                   >
-                    {openedProject[0].description}
+                    {project.description}
                   </div>
                   <h5 className="mt-4">Start Date:</h5>
-                  <div>{openedProject[0].startDate.substring(0, 10)}</div>
+                  <div>{project.startDate.substring(0, 10)}</div>
                   <h5 className="mt-4">Deadline:</h5>
-                  <div>{openedProject[0].endDate.substring(0, 10)}</div>
+                  <div>{project.endDate.substring(0, 10)}</div>
                 </>
               )}
 

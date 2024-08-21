@@ -10,16 +10,22 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        getProject: builder.mutation({
+            query: (projectId) => ({
+                url: `${PROJECT_URL}/getproject`,
+                method: 'POST',
+                body: projectId,
+            })
+        }),
         getProjectDetails: builder.mutation({
             query: (projectIds) => ({
-                url: `${PROJECT_URL}/projects`,
+                url: `${PROJECT_URL}/projectdetails`,
                 method: 'POST',
                 body: projectIds
             }),
-            keepUnusedDataFor: 3600,
-            providesTags: ['projects']
+            keepUnusedDataFor: 5,
         })
     })
 })
 
-export const { useCreateProjectMutation, useGetProjectDetailsMutation } = userApiSlice
+export const { useCreateProjectMutation, useGetProjectMutation, useGetProjectDetailsMutation } = userApiSlice

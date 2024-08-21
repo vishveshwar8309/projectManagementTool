@@ -38,8 +38,29 @@ const createProject = async (req, res) => {
     }
 }
 
+
+const getProject = async (req, res) => {
+    const projectId = req.body;
+    // console.log("projectId");
+
+    try {
+        const project = await Project.findById(projectId);
+        console.log(project)
+
+        if (project) {
+            res.status(200).json(project)
+        } else {
+            res.status(404).json({ message: "Project not Found" });
+        }
+
+    } catch (err) {
+        res.status(500).json("Server error");
+    }
+}
+
 const getProjectDetails = async (req, res) => {
     const projectIds = req.body;
+    console.log(projectIds);
     try {
         const projectsDetails = await Project.find({ _id: { $in: projectIds } });
 
@@ -54,4 +75,4 @@ const getProjectDetails = async (req, res) => {
     }
 
 }
-export { createProject, getProjectDetails }
+export { createProject, getProject, getProjectDetails }
